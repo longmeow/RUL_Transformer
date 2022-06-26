@@ -1,1 +1,10 @@
-l_win: 50
+l_win: 120
+batch_size: 64
+num_workers: 4
+d_model: 16
+n_head: 1
+dff: 256
+num_layers: 2
+lr: 0.001
+n_epochs: 10
+checkpoint_dir: /home/longmeow/Documents/RUL_Transformer/Checkpoint

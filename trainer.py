@@ -4,7 +4,7 @@ import torch.optim as optim
 from copy import deepcopy
 
 class ModelTrainer():
-    def __init__(self, model, train_data, optimizer, device, config):
+    def __init__(self, model, train_data, criterion, optimizer, device, config):
         self.model = model
         self.train_data = train_data
         self.device = device
@@ -14,14 +14,15 @@ class ModelTrainer():
         self.best_model = None
         self.best_optimizer = None
         self.optimizer = optimizer
+        self.criterion = criterion
 
-    def train_epoch(self, criterion, epoch):
+    def train_epoch(self, epoch):
         train_loss = 0.0
         self.model.train()
         for idx, (x, rul) in enumerate(self.train_data):
             self.model.zero_grad()
             out = self.model(x.to(self.device).float())
-            loss = criterion(out.float(), rul.float())
+            loss = self.criterion(out.float(), rul.float())
             loss.backward()
             self.optimizer.step()
             train_loss += loss.item()
@@ -37,10 +38,9 @@ class ModelTrainer():
     
     def train(self):
         self.model.to(self.device)
-        criterion = nn.MSELoss()
 
         for epoch in range(1, self.config['n_epochs']+1):
-            self.train_epoch(criterion, epoch)
+            self.train_epoch(epoch)
 
         torch.save(self.best_model, self.config["checkpoint_dir"] + "best_model.pt")
         torch.save(self.best_optimizer, self.config["checkpoint_dir"] + "best_optim.pt")
