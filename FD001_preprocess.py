@@ -38,7 +38,7 @@ test_df = test_df.merge(truth_df, on=['id'], how='left')
 test_df['RUL'] = test_df['max'] - test_df['cycle']
 test_df.drop('max', axis=1, inplace=True)
 
-# MinMax normalization train_df
+# Normalize train_df
 cols_normalize = train_df.columns.difference(['id','cycle','RUL'])
 min_max_scaler = MinMaxScaler()
 norm_train_df = pd.DataFrame(min_max_scaler.fit_transform(train_df[cols_normalize]), 
@@ -47,7 +47,7 @@ norm_train_df = pd.DataFrame(min_max_scaler.fit_transform(train_df[cols_normaliz
 join_df = train_df[train_df.columns.difference(cols_normalize)].join(norm_train_df)
 train_df = join_df.reindex(columns = train_df.columns)
 
-# MinMax normalization test_df
+# Normalize test_df
 norm_test_df = pd.DataFrame(min_max_scaler.transform(test_df[cols_normalize]), 
                             columns=cols_normalize, 
                             index=test_df.index)
@@ -62,3 +62,6 @@ test_df.drop(columns=test_df.columns[uniq_value_cols], inplace=True)
 train_df.drop(columns='s6', inplace=True)
 test_df.drop(columns='s6', inplace=True)
 
+#Save preprocessed dataset as .csv 
+train_df.to_csv('train.csv', encoding='utf-8', index=False)
+test_df.to_csv('test.csv', encoding='utf-8', index=False)
