@@ -1,4 +1,3 @@
-from random import shuffle
 import sys
 import time
 import yaml
