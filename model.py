@@ -1,14 +1,12 @@
 import torch.nn as nn
 import torch.nn.functional as F
 
-
 class TransformerEncoderLayer(nn.Module):
     def __init__(self, d_model, nhead, dff):
         super().__init__()
         self.d_model = d_model
         self.nhead = nhead
         self.dff = dff
-
         self.encoderlayer = nn.TransformerEncoderLayer(d_model=self.d_model, nhead=self.nhead, dim_feedforward=self.dff, batch_first=True)
     
     def forward(self, src, src_mask=None, src_key_padding_mask=None):
@@ -21,7 +19,6 @@ class TransformerEncoder(nn.Module):
         super().__init__()
         self.encoder_layer = encoder_layer
         self.num_layer = num_layers
-        
         self.transformer_encoder = nn.TransformerEncoder(encoder_layer, num_layers)
     
     def forward(self, src):
@@ -48,7 +45,6 @@ def create_transformer(d_model, nhead, dff, num_layers):
     model = TransformerModel(TransformerEncoder(
         TransformerEncoderLayer(d_model, nhead, dff), num_layers),
                              linear)
-    
     return model
 
 
