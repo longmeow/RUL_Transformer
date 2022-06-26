@@ -1,4 +1,4 @@
-from logging import critical
+import torch
 import torch.nn as nn
 import torch.optim as optim
 from copy import deepcopy
@@ -42,3 +42,5 @@ class ModelTrainer():
         for epoch in range(1, self.config['n_epochs']+1):
             self.train_epoch(criterion, epoch)
 
+        torch.save(self.best_model, self.config["checkpoint_dir"] + "best_model.pt")
+        torch.save(self.best_optimizer, self.config["checkpoint_dir"] + "best_optim.pt")
