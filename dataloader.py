@@ -11,8 +11,9 @@ class TimeSeriesDataset(Dataset):
         
     def __getitem__(self, idx):
         data = self.data[idx, :, :]
-        label = self.label[idx, :][-1]
-        return data, label
+        label = self.label[idx, :]
+        label = np.expand_dims(label, 1)
+        return data, label[-1]
 
     def __len__(self):
         return self.data.shape[0]
