@@ -16,10 +16,7 @@ torch.manual_seed(42)
 def main():
     config = get_config_from_yaml('/home/longmeow/Documents/RUL_Transformer/config.yml')
 
-    if torch.cuda.is_available():
-        device = torch.device("cuda")
-    else:
-        device = torch.device("cpu")
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     train_data = TimeSeriesDataset(config)
     train_loader = DataLoader(train_data, 
@@ -38,6 +35,7 @@ def main():
     trainer = ModelTrainer(model, train_loader, criterion, optimizer, device, config)
 
     trainer.train()
+    print('DONE.') 
 
 if __name__ == "__main__":
     main()
