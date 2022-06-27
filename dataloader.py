@@ -63,11 +63,3 @@ class TimeSeriesDataset(Dataset):
             
             self.data = last_rolling_window_test
             self.label = last_label_test
-            
-
-        
-        
-                
-        
-
-        
