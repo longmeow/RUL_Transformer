@@ -7,4 +7,4 @@ dff: 256
 num_layers: 2
 lr: 0.001
 n_epochs: 10
-checkpoint_dir: /home/longmeow/Documents/RUL_Transformer/Checkpoint
+checkpoint_dir: /home/longmeow/Documents/RUL_Transformer/Checkpoint/

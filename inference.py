@@ -5,7 +5,7 @@ from torch.utils.data import DataLoader
 from dataloader import TimeSeriesDataset
 from model import create_transformer
 from trainer import ModelTrainer
-from utils import get_config_from_yaml
+from utils import get_config_from_yaml, save_config
 
 torch.manual_seed(42)
 np.random.seed(42)
@@ -23,14 +23,13 @@ def load_model(config):
         config["checkpoint_dir"] + "best_model.pt"))
     model.float()
     model.eval()
-
     return model
 
 @torch.no_grad()
 def main():
     config = get_config_from_yaml('/home/longmeow/Documents/RUL_Transformer/config.yml')
     
-    test_data = TimeSeriesDataset(config, mode='test')
+    test_data = TimeSeriesDataset(config, mode='train')
     test_loader = DataLoader(test_data, 
                             batch_size=config['batch_size'],
                             shuffle=False, 
@@ -42,7 +41,7 @@ def main():
     test_loss = 0.0
     pred_list = list()
     criterion = nn.MSELoss()
-    
+
     with torch.no_grad():
         for idx, (x, rul) in enumerate(test_loader):
             out = model(x.to(device).float())
@@ -54,8 +53,7 @@ def main():
     config['test_loss_avg'] = test_loss_avg
 
     pred_list = np.array(pred_list)
-    with open('pred_list.npy', 'wb') as f:
-        np.save(f, pred_list)
+    save_config(config['result_dir'], config)
 
     print('DONE.')   
 

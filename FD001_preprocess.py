@@ -57,8 +57,10 @@ test_df = test_df.reset_index(drop=True)
 
 #Drop unique cols
 uniq_value_cols = (train_df.nunique() == 1) & (test_df.nunique() == 1)
+
 train_df.drop(columns=train_df.columns[uniq_value_cols], inplace=True)
 test_df.drop(columns=test_df.columns[uniq_value_cols], inplace=True)
+
 train_df.drop(columns='s6', inplace=True)
 test_df.drop(columns='s6', inplace=True)
 
