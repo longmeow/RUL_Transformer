@@ -43,21 +43,20 @@ def main():
     pred_list = list()
     criterion = nn.MSELoss()
     
-    #deviation_list = list()
-
-    for idx, (x, rul) in enumerate(test_loader):
-        out = model(x.to(device).float())
-        loss = criterion(out.float(), rul.float())
-        test_loss += loss.item()
-        pred_list.append(out.item())
+    with torch.no_grad():
+        for idx, (x, rul) in enumerate(test_loader):
+            out = model(x.to(device).float())
+            loss = criterion(out.float(), rul.float())
+            test_loss += loss.item()
+            pred_list.append(out.item())
 
     test_loss_avg = test_loss / len(test_loader)
-    print(test_loss_avg)
+    config['test_loss_avg'] = test_loss_avg
 
-    test_loss_avg = np.array(test_loss_avg)
     pred_list = np.array(pred_list)
-    infer_dict = {'predict_rul': pred_list}
-    np.savez('result.npz', **infer_dict)
+    with open('pred_list.npy', 'wb') as f:
+        np.save(f, pred_list)
+
     print('DONE.')   
 
 if __name__ == "__main__":
