@@ -34,18 +34,16 @@ class TransformerModel(nn.Module):
 
     def forward(self, src):
         out = F.relu(self.linear(
-            self.encoder(src)[-1]))
+            self.encoder(src)))
         return out
 
 
-def create_transformer(d_model, nhead, dff, num_layers):
-    if (dff == 0):
-        dff = d_model * 4
-    linear = nn.Linear(d_model, 1)
+def create_transformer(d_model, nhead, dff, num_layers, l_win):
+    linear = nn.Sequential(
+        nn.Flatten(),
+        nn.Linear(d_model*l_win, 1)
+    )
     model = TransformerModel(TransformerEncoder(
         TransformerEncoderLayer(d_model, nhead, dff), num_layers),
                              linear)
     return model
-
-
-    
