@@ -19,9 +19,9 @@ class TimeSeriesDataset(Dataset):
 
     def load_dataset(self, l_win):
         if self.mode == 'train':
-            data_loaded = pd.read_csv('/home/longmeow/Documents/train.csv')
+            data_loaded = pd.read_csv('/home/longmeow/Documents/FD001/train.csv')
         else:
-            data_loaded = pd.read_csv('/home/longmeow/Documents/test.csv')
+            data_loaded = pd.read_csv('/home/longmeow/Documents/FD001/test.csv')
         
         def gen_rolling_windows_data(data, l_win):
             rolling_windows = data[data.columns.difference(['id', 'cycle', 'RUL'])].to_numpy()
