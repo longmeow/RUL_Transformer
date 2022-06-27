@@ -1,3 +1,4 @@
+import numpy as np
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -19,7 +20,7 @@ class ModelTrainer():
     def train_epoch(self, epoch):
         train_loss = 0.0
         self.model.train()
-        for idx, (x, rul) in enumerate(self.train_data):
+        for x, rul in self.train_data:
             self.model.zero_grad()
             out = self.model(x.to(self.device).float())
             loss = self.criterion(out.float(), rul.float())
@@ -43,4 +44,4 @@ class ModelTrainer():
             self.train_epoch(epoch)
 
         torch.save(self.best_model, self.config["checkpoint_dir"] + "best_model.pt")
-        torch.save(self.best_optimizer, self.config["checkpoint_dir"] + "best_optim.pt")
+        np.save('train_loss_list', np.array(self.train_loss_list))

@@ -1,4 +1,5 @@
 import numpy as np
+import time
 import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader
@@ -27,9 +28,10 @@ def load_model(config):
 
 @torch.no_grad()
 def main():
+    start = time.perf_counter()
     config = get_config_from_yaml('/home/longmeow/Documents/RUL_Transformer/config.yml')
     
-    test_data = TimeSeriesDataset(config, mode='train')
+    test_data = TimeSeriesDataset(config, mode='test')
     test_loader = DataLoader(test_data, 
                             batch_size=config['batch_size'],
                             shuffle=False, 
@@ -39,23 +41,22 @@ def main():
     model.to(device)
     
     test_loss = 0.0
-    pred_list = list()
     criterion = nn.MSELoss()
 
     with torch.no_grad():
-        for idx, (x, rul) in enumerate(test_loader):
+        for x, rul in test_loader:
             out = model(x.to(device).float())
             loss = criterion(out.float(), rul.float())
             test_loss += loss.item()
-            pred_list.append(out.item())
 
     test_loss_avg = test_loss / len(test_loader)
     config['test_loss_avg'] = test_loss_avg
 
-    pred_list = np.array(pred_list)
-    save_config(config['result_dir'], config)
+    save_config(config['result_file'], config)
 
-    print('DONE.')   
+    print('DONE.')
+    total = (time.perf_counter() - start) / 60
+    print(total)   
 
 if __name__ == "__main__":
     main() 

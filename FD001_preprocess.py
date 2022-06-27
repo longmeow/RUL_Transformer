@@ -3,9 +3,9 @@ import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
 
 #Read dataset
-train_df = pd.read_csv('/home/longmeow/Documents/RUL_Transformer/FD001/train_FD001.txt', sep=" ", header=None)
-test_df = pd.read_csv('/home/longmeow/Documents/RUL_Transformer/FD001/test_FD001.txt', sep=" ", header=None)
-truth_df = pd.read_csv('/home/longmeow/Documents/Remaining-Useful-Life-Estimation-Variational/data/RUL_FD001.txt', sep=" ", header=None)
+train_df = pd.read_csv('/home/longmeow/Documents/RUL_Data/train_FD001.txt', sep=" ", header=None)
+test_df = pd.read_csv('/home/longmeow/Documents/RUL_Data/test_FD001.txt', sep=" ", header=None)
+truth_df = pd.read_csv('/home/longmeow/Documents/RUL_Data/RUL_FD001.txt', sep=" ", header=None)
 
 #Trainset
 train_df.drop(train_df.columns[[26, 27]], axis=1, inplace=True)

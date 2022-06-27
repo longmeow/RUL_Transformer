@@ -14,6 +14,7 @@ from utils import get_config_from_yaml
 torch.manual_seed(42)
 
 def main():
+    start = time.perf_counter()
     config = get_config_from_yaml('/home/longmeow/Documents/RUL_Transformer/config.yml')
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -36,6 +37,7 @@ def main():
 
     trainer.train()
     print('DONE.') 
-
+    total = (time.perf_counter() - start) / 60
+    print(total)  
 if __name__ == "__main__":
     main()
