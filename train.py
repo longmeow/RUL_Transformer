@@ -37,8 +37,11 @@ def main():
     trainer = ModelTrainer(model, train_loader, criterion, optimizer, device, config)
 
     trainer.train()
+
     print('DONE.') 
+
     total = (time.perf_counter() - start) / 60
-    print(total)  
+    print('Training time: {}'.format(total))
+
 if __name__ == "__main__":
     main()
