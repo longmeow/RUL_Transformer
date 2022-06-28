@@ -22,7 +22,8 @@ def load_model(config):
                             dropout=config['dropout'],
                             l_win=config['l_win'])
     model.load_state_dict(torch.load(
-        config["checkpoint_dir"] + "best_model.pt"))
+        config["checkpoint_dir"] + "model__lr_{}_l_win_{}_dff_{}.pt".format(
+                    config['lr'], config['l_win'], config['dff'])))
     model.float()
     model.eval()
     return model
