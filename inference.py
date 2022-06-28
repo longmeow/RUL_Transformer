@@ -31,11 +31,13 @@ def load_model(config):
 @torch.no_grad()
 def main():
     start = time.perf_counter()
-    config = get_config_from_yaml('/home/longmeow/Documents/RUL_Transformer/config.yml')
+    _config = get_config_from_yaml('/home/longmeow/Documents/RUL_Transformer/config.yml')
+    config = get_config_from_yaml('{}'.format(_config['result_dir']) + "result_lr_{}_l_win_{}_dff_{}.yml".format(
+        _config['lr'], _config['l_win'], _config['dff']))
     
     test_data = TimeSeriesDataset(config, mode='test')
     test_loader = DataLoader(test_data, 
-                            batch_size=config['batch_size'],
+                            batch_size=1,
                             shuffle=False, 
                             num_workers=config['num_workers'])
     
@@ -44,22 +46,30 @@ def main():
     
     test_loss = 0.0
     criterion = nn.MSELoss()
+    test_lost_list = list()
 
     with torch.no_grad():
         for x, rul in test_loader:
             out = model(x.to(device).float())
             loss = criterion(out.float(), rul.float())
             test_loss += loss.item()
+            test_lost_list.append(loss.item())
 
     test_loss_avg = test_loss / len(test_loader)
+    
     config['test_loss_avg'] = test_loss_avg
-
+    config['test_loss_list_per_id'] = test_lost_list
+    
     save_config(config['result_dir'] + "result_lr_{}_l_win_{}_dff_{}.yml".format(
         config['lr'], config['l_win'], config['dff']), config)
-
+ 
     print('DONE.')
     total = (time.perf_counter() - start) / 60
-    print(total)   
-
+    print('Inference time: {}'.format(total))   
+    print('-----Test lost avg-----')
+    print(test_loss_avg)
+    print('-----Test lost list-----')
+    print(test_lost_list, len(test_lost_list))
+    
 if __name__ == "__main__":
     main() 
