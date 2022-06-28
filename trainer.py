@@ -43,5 +43,7 @@ class ModelTrainer():
         for epoch in range(1, self.config['n_epochs']+1):
             self.train_epoch(epoch)
 
-        torch.save(self.best_model, self.config["checkpoint_dir"] + "best_model.pt")
-        np.save('train_loss_list', np.array(self.train_loss_list))
+        torch.save(self.best_model, self.config["checkpoint_dir"] + "model__lr_{}_l_win_{}_dff_{}.pt".format(
+                    self.config['lr'], self.config['l_win'], self.config['dff']))
+        np.save("train_lost_lr_{}_l_win_{}_dff_{}.pt".format(
+                    self.config['lr'], self.config['l_win'], self.config['dff']), np.array(self.train_loss_list))

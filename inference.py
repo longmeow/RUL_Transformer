@@ -19,6 +19,7 @@ def load_model(config):
                             nhead=config['n_head'],
                             dff=config['dff'],
                             num_layers=config['num_layers'],
+                            dropout=config['dropout'],
                             l_win=config['l_win'])
     model.load_state_dict(torch.load(
         config["checkpoint_dir"] + "best_model.pt"))
@@ -52,7 +53,8 @@ def main():
     test_loss_avg = test_loss / len(test_loader)
     config['test_loss_avg'] = test_loss_avg
 
-    save_config(config['result_file'], config)
+    save_config(config['result_dir'] + "result_lr_{}_l_win_{}_dff_{}.yml".format(
+        config['lr'], config['l_win'], config['dff']), config)
 
     print('DONE.')
     total = (time.perf_counter() - start) / 60

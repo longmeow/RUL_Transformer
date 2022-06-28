@@ -29,9 +29,10 @@ def main():
                             nhead=config['n_head'],
                             dff=config['dff'],
                             num_layers=config['num_layers'],
+                            dropout=config['dropout'],
                             l_win=config['l_win'])
     
-    optimizer = torch.optim.Adam(model.parameters(), lr=config["lr"])
+    optimizer = torch.optim.Adam(model.parameters(), lr=config["lr"], weight_decay=config['weight_decay'])
     criterion = nn.MSELoss()
     trainer = ModelTrainer(model, train_loader, criterion, optimizer, device, config)
 
