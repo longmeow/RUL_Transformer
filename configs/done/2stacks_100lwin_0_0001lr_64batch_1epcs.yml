@@ -1,0 +1,13 @@
+batch_size: 64
+d_model: 16
+dff: 64
+dropout: 0.2
+experiment: 2stacks_100lwin_0_0001lr_64batch_1epcs
+l_win: 100
+l_win_max: 31
+lr: 0.0001
+n_epochs: 1
+n_head: 1
+num_layers: 2
+num_workers: 4
+weight_decay: 0.0001
