@@ -1,0 +1,3 @@
+.flake8
+experiments/
+__pycache__/
