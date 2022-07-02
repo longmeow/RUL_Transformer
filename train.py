@@ -41,8 +41,7 @@ def main():
                                dropout=config['dropout'],
                                l_win=config['l_win'])
 
-    # optimizer = torch.optim.Adam(model.parameters(), lr=config["lr"], weight_decay=config['weight_decay'])
-    optimizer = torch.optim.RMSprop(model.parameters(), lr=config["lr"], weight_decay=config['weight_decay'])
+    optimizer = torch.optim.Adam(model.parameters(), lr=config["lr"], weight_decay=config['weight_decay'])
     criterion = nn.MSELoss()
     trainer = ModelTrainer(model, train_loader, criterion, optimizer, device, config)
 
@@ -55,9 +54,6 @@ def main():
     print('DONE.')
     total = (time.perf_counter() - start) / 60
     print('Training time: {}'.format(total))
-    print('-----Train loss list-----')
-    print(config['train_loss_list'])
-
 
 if __name__ == "__main__":
     main()

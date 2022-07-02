@@ -13,9 +13,8 @@ class TimeSeriesDataset(Dataset):
     def __getitem__(self, idx):
         if self.mode == 'train':
             data = self.data[idx, :, :]
-            label = self.label[idx, :]
-            label = np.expand_dims(label, 1)
-            return data, label[-1]
+            label = self.label[idx]
+            return data, label
         else:
             data = self.data[idx, :, :]
             label = self.label[idx]
@@ -26,41 +25,55 @@ class TimeSeriesDataset(Dataset):
 
     def load_dataset(self, config):
         if self.mode == 'train':
-            data_loaded = pd.read_csv(config['data_path'] + "train.csv")
+            train_df = pd.read_csv(config['data_path'] + "train.csv")
 
-            def gen_rolling_windows_data(data):
-                rolling_windows = data[data.columns.difference(['id', 'cycle', 'RUL'])].to_numpy()
-                n_samples = data.shape[0]
-                for start, stop in zip(range(0, n_samples - config['l_win']), range(config['l_win'], n_samples)):
-                    yield rolling_windows[start:stop, :]
+            def gen_sequence(id_df, seq_length, seq_cols):
+                data_array = id_df[seq_cols].values
+                num_elements = data_array.shape[0]
+                for start, stop in zip(range(0, num_elements-seq_length), range(seq_length, num_elements)):
+                    yield data_array[start:stop, :]
 
-            def gen_rolling_windows_labels(data):
-                rolling_windows = data['RUL'].to_numpy()
-                n_labels = rolling_windows.shape[0]
-                for start, stop in zip(range(0, n_labels - config['l_win']), range(config['l_win'], n_labels)):
-                    yield rolling_windows[start:stop]
+            sensor_cols = ['s2', 's3', 's4', 's7', 's8', 's9', 's11', 's12', 's13', 's14', 's15', 's17', 's20', 's21']
+            sequence_cols = ['setting1', 'setting2']
+            sequence_cols.extend(sensor_cols)
+            # generator for the sequences
+            seq_gen = (list(gen_sequence(train_df[train_df['id']==id], self.config['l_win'], sequence_cols)) 
+                      for id in train_df['id'].unique())
 
-            data_generator = (list(gen_rolling_windows_data(data_loaded[data_loaded['id'] == id]))
-                              for id in data_loaded['id'].unique())
-            data = np.concatenate(list(data_generator)).astype(np.float32)
+            # generate sequences and convert to numpy array
+            seq_array = np.concatenate(list(seq_gen)).astype(np.float32)
 
-            label_generator = (list(gen_rolling_windows_labels(data_loaded[data_loaded['id'] == id]))
-                               for id in data_loaded['id'].unique())
-            label = np.concatenate(list(label_generator)).astype(np.float32)
+            # function to generate labels
+            def gen_labels(id_df, seq_length, label):
+                data_array = id_df[label].values
+                num_elements = data_array.shape[0]
+                return data_array[seq_length:num_elements, :]
 
-            self.data = data
-            self.label = label
+            # generate labels
+            label_gen = [gen_labels(train_df[train_df['id']==id], self.config['l_win'], ['RUL']) 
+                        for id in train_df['id'].unique()]
+            label_array = np.concatenate(label_gen).astype(np.float32)
+
+            self.data = seq_array
+            self.label = label_array
 
         else:
-            data_loaded = pd.read_csv(config['data_path'] + "test.csv")
+            test_df = pd.read_csv(config['data_path'] + "test.csv")
 
-            last_rolling_window_test = [data_loaded[data_loaded.columns.difference(['id', 'cycle', 'RUL'])].to_numpy()[-config['l_win']:]
-                                        for id in data_loaded['id'].unique() if len(data_loaded[data_loaded['id'] == id]) >= config['l_win']]
-            last_rolling_window_test = np.asarray(last_rolling_window_test).astype(np.float32)
+            sensor_cols = ['s2', 's3', 's4', 's7', 's8', 's9', 's11', 's12', 's13', 's14', 's15', 's17', 's20', 's21']
+            sequence_cols = ['setting1', 'setting2']
+            sequence_cols.extend(sensor_cols)
 
-            y_mask = [len(data_loaded[data_loaded['id'] == id]) >= config['l_win'] for id in data_loaded['id'].unique()]
-            last_label_test = data_loaded.groupby('id')['RUL'].nth(-1)[y_mask].to_numpy()
-            last_label_test = last_label_test.reshape(last_label_test.shape[0], 1).astype(np.float32)
+            seq_array_test_last = [test_df[test_df['id']==id][sequence_cols].values[-config['l_win']:] 
+                                  for id in test_df['id'].unique() if len(test_df[test_df['id']==id]) >= config['l_win']]
 
-            self.data = last_rolling_window_test
-            self.label = last_label_test
+            seq_array_test_last = np.asarray(seq_array_test_last).astype(np.float32)
+
+
+            y_mask = [len(test_df[test_df['id']==id]) >= config['l_win'] for id in test_df['id'].unique()]
+
+            label_array_test_last = test_df.groupby('id')['RUL'].nth(-1)[y_mask].values
+            label_array_test_last = label_array_test_last.reshape(label_array_test_last.shape[0],1).astype(np.float32)
+
+            self.data = seq_array_test_last
+            self.label = label_array_test_last

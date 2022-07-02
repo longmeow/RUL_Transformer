@@ -1,7 +1,6 @@
 import torch
 from copy import deepcopy
 
-
 class ModelTrainer():
     def __init__(self, model, train_data, criterion, optimizer, device, config):
         self.model = model
@@ -21,7 +20,7 @@ class ModelTrainer():
         for x, rul in self.train_data:
             self.model.zero_grad()
             out = self.model(x.to(self.device).float())
-            loss = self.criterion(out.float(), rul.to(self.device).float())
+            loss = torch.sqrt(self.criterion(out.float(), rul.to(self.device).float()))
             loss.backward()
             self.optimizer.step()
             train_loss += loss.item()

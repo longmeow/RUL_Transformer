@@ -55,4 +55,9 @@ def create_transformer(d_model, nhead, dff, num_layers, dropout, l_win):
         ),
         linear,
     )
+
+    for p in model.parameters():
+      if p.dim() > 1:
+        nn.init.xavier_uniform_(p)
+
     return model
