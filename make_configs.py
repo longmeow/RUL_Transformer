@@ -37,7 +37,7 @@ def main():
         config = {
             "experiment": filename,
             "l_win_max": 31,
-            "d_model": 16,
+            "d_model": 23,
         }
         config.update(comb)
         print(filename)
