@@ -25,16 +25,41 @@ class TimeSeriesDataset(Dataset):
 
     def load_dataset(self, config):
         if self.mode == 'train':
-            train_df = pd.read_csv(config['data_path'] + "train.csv")
+            train_df = pd.read_csv(config['data_path'] + "train_002.csv")
 
             def gen_sequence(id_df, seq_length, seq_cols):
                 data_array = id_df[seq_cols].values
                 num_elements = data_array.shape[0]
                 for start, stop in zip(range(0, num_elements-seq_length), range(seq_length, num_elements)):
                     yield data_array[start:stop, :]
+            #FD002
+            train_df = pd.read_csv(
+                config["data_path"] + f"train_002.csv"
+            )
 
-            sensor_cols = ['s2', 's3', 's4', 's7', 's8', 's9', 's11', 's12', 's13', 's14', 's15', 's17', 's20', 's21']
-            sequence_cols = ['setting1', 'setting2']
+            sensor_cols = [
+                "s1",
+                "s2",
+                "s3",
+                "s4",
+                "s5",
+                "s7",
+                "s8",
+                "s9",
+                "s10",
+                "s11",
+                "s12",
+                "s13",
+                "s14",
+                "s15",
+                "s16",
+                "s17",
+                "s18",
+                "s19",
+                "s20",
+                "s21",
+            ]
+            sequence_cols = ["setting1", "setting2", "setting3"]
             sequence_cols.extend(sensor_cols)
             # generator for the sequences
             seq_gen = (list(gen_sequence(train_df[train_df['id']==id], self.config['l_win'], sequence_cols)) 
@@ -58,10 +83,36 @@ class TimeSeriesDataset(Dataset):
             self.label = label_array
 
         else:
-            test_df = pd.read_csv(config['data_path'] + "test.csv")
+            test_df = pd.read_csv(config['data_path'] + "test_002.csv")
+            
+ #FD002
+            train_df = pd.read_csv(
+                config["data_path"] + f"train_002.csv"
+            )
 
-            sensor_cols = ['s2', 's3', 's4', 's7', 's8', 's9', 's11', 's12', 's13', 's14', 's15', 's17', 's20', 's21']
-            sequence_cols = ['setting1', 'setting2']
+            sensor_cols = [
+                "s1",
+                "s2",
+                "s3",
+                "s4",
+                "s5",
+                "s7",
+                "s8",
+                "s9",
+                "s10",
+                "s11",
+                "s12",
+                "s13",
+                "s14",
+                "s15",
+                "s16",
+                "s17",
+                "s18",
+                "s19",
+                "s20",
+                "s21",
+            ]
+            sequence_cols = ["setting1", "setting2", "setting3"]
             sequence_cols.extend(sensor_cols)
 
             seq_array_test_last = [test_df[test_df['id']==id][sequence_cols].values[-config['l_win']:] 

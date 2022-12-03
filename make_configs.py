@@ -5,16 +5,16 @@ import itertools
 
 def main():
     params = {
-        "l_win": [80, 100, 120, 140],
-        "batch_size": [64],
+        "l_win": [120],
+        "batch_size": [128],
         "num_workers": [4],
-        "n_head": [4],
-        "dff": [64, 128],
-        "num_layers": [2, 3, 4, 5],
-        "lr": [0.0005, 0.0003, 0.0001],
-        "weight_decay": [0.0001],
-        "n_epochs": [100, 120, 150],
-        "dropout": [0.2],
+        "n_head": [1, 2, 4, 8],
+        "dff": [128, 256],
+        "num_layers": [2, 3, 4],
+        "lr": [0.001, 0.0005],
+        "weight_decay": [0.0005, 0.0003, 0.001],
+        "n_epochs": [40, 100, 140, 300],
+        "dropout": [0.1],
     }
 
     keys, values = zip(*params.items())
@@ -23,13 +23,15 @@ def main():
     print(f"GENERATING {len(combs)} NEW CONFIGS ...")
 
     for comb in combs:
-        filename = "{}stacks_{}lwin_{}lr_{}dff_{}batch_{}epcs".format(
+        filename = "{}stacks_{}nhead_{}lwin_{}lr_{}dff_{}batch_{}epcs_{}dropout".format(
             comb["num_layers"],
+            comb["n_head"],
             comb["l_win"],
             comb["lr"],
             comb['dff'],
             comb["batch_size"],
             comb["n_epochs"],
+            comb['dropout'],
         ).replace(".", "_")
         config_path = os.path.join("configs/", "{}.yml".format(filename))
         config = {

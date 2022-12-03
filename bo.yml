@@ -1,0 +1,39 @@
+method: bayes
+metric:
+    goal: minimize
+    name: test_loss_avg
+parameters:
+    batch_size:
+        values: [64]
+    d_model:
+        value: 23
+    dff:
+        values: [128, 256]
+    dropout:
+        distribution: uniform
+        min: 0.05
+        max: 0.15
+    l_win:
+        distribution: int_uniform
+        min: 120
+        max: 125
+    lr: 
+        distribution: log_uniform
+        min: -6.5
+        max: -5.5
+    n_epochs: 
+        distribution: int_uniform
+        min: 60
+        max: 100
+    n_head: 
+        values: [1, 23]
+    num_layers: 
+        distribution: int_uniform
+        min: 1
+        max: 3
+    weight_decay:
+        distribution: log_uniform
+        min: -6
+        max: -4  
+    num_workers: 
+        values: [2]
